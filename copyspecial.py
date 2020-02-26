@@ -23,10 +23,18 @@ __author__ = "luisfff29"
 # Write functions and modify main() to call them
 def get_special_paths(dirname):
     """Fin all special files and list them"""
+    paths = []
     for p, d, f in os.walk(dirname):
         for files in f:
             if "/." not in p and re.findall(r'\w*__\w+__\w*.\w*', files):
-                print(os.path.join(p, files))
+                paths.append(os.path.join(p, files))
+    return paths
+
+
+def copy_to(paths, dirname):
+    """Copy all special files into the given directory"""
+    for files in paths:
+        shutil.copy(files, dirname)
 
 
 def main():
@@ -38,11 +46,11 @@ def main():
     parser.add_argument('dir', help='dir path')
     # TODO need an argument to pick up 'from_dir'
     args = parser.parse_args()
+    print(args)
 
     if args.dir == ".":
-        my_dir = os.getcwd()
-
-    get_special_paths(my_dir)
+        args.dir = os.getcwd()
+    os.makedirs(args.todir)
 
     # TODO you must write your own code to get the cmdline args.
     # Read the docs and examples for the argparse module about how to do this.
@@ -55,6 +63,12 @@ def main():
         parser.print_usage()
         sys.exit(1)
     # Call your functions
+
+    if args.todir:
+        copy_to(get_special_paths(args.dir), args.todir)
+    else:
+        for files in get_special_paths(args.dir):
+            print(files)
 
 
 if __name__ == "__main__":
