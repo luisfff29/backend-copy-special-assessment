@@ -23,9 +23,9 @@ __author__ = "luisfff29"
 # Write functions and modify main() to call them
 def get_special_paths(dirname):
     """Fin all special files and list them"""
-    for p, d, f in os.walk(dirname, topdown=True):
-        if "/." not in p:
-            for files in f:
+    for p, d, f in os.walk(dirname):
+        for files in f:
+            if "/." not in p and re.findall(r'\w*__\w+__\w*.\w*', files):
                 print(os.path.join(p, files))
 
 
