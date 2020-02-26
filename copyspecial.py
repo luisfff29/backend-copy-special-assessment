@@ -50,11 +50,6 @@ def main():
 
     if args.dir == ".":
         args.dir = os.getcwd()
-    try:
-        os.makedirs(args.todir)
-    except OSError:
-        print('Oops! {} was already created'.format(args.todir))
-        sys.exit(1)
 
     # TODO you must write your own code to get the cmdline args.
     # Read the docs and examples for the argparse module about how to do this.
@@ -68,8 +63,16 @@ def main():
         sys.exit(1)
     # Call your functions
 
-    if args.todir:
-        copy_to(get_special_paths(args.dir), args.todir)
+    if args.dir:
+        try:
+            if os.path.exists(args.todir):
+                copy_to(get_special_paths(args.dir), args.todir)
+            else:
+                os.makedirs(args.todir)
+                copy_to(get_special_paths(args.dir), args.todir)
+        except shutil.Error:
+            print('Oops! {} was already created'.format(args.todir))
+            sys.exit(1)
     else:
         for files in get_special_paths(args.dir):
             print(files)
