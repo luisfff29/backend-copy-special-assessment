@@ -50,7 +50,11 @@ def main():
 
     if args.dir == ".":
         args.dir = os.getcwd()
-    os.makedirs(args.todir)
+    try:
+        os.makedirs(args.todir)
+    except OSError:
+        print('Oops! {} was already created'.format(args.todir))
+        sys.exit(1)
 
     # TODO you must write your own code to get the cmdline args.
     # Read the docs and examples for the argparse module about how to do this.
