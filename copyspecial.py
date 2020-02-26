@@ -11,12 +11,13 @@
 
 import re
 import os
+import sys
 import shutil
 import subprocess
 import argparse
 
 # This is to help coaches and graders identify student assignments
-__author__ = "???"
+__author__ = "luisfff29"
 
 
 # +++your code here+++
@@ -37,7 +38,9 @@ def main():
     # This is input data validation.  If something is wrong (or missing) with any
     # required args, the general rule is to print a usage message and exit(1).
 
-    # +++your code here+++
+    if not args:
+        parser.print_usage()
+        sys.exit(1)
     # Call your functions
 
 
