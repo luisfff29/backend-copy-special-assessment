@@ -31,17 +31,24 @@ def get_special_paths(dirname):
     return paths
 
 
-def copy_to(paths, dirname):
+def copy_to(paths, dir_name):
     """Copy all special files into the given directory"""
     for files in paths:
-        shutil.copy(files, dirname)
+        shutil.copy(files, dir_name)
 
 
 def zip_to(paths, zippath):
     """Create a zipfile containing the files"""
-    cmd = subprocess.run(['zip', '-j', zippath, paths])
     print("Command I'm going to do:")
-    print(cmd.args[0] + " " + cmd.args[1] + " " + zippath + " " + paths)
+    print("zip -j {} {}".format(zippath, " ".join(paths)))
+    print()
+    if "/" not in zippath:
+        for p in paths:
+            subprocess.run(['zip', '-j', zippath, p], capture_output=True)
+    else:
+        for p in paths:
+            subprocess.run(['zip', '-j', zippath, p])
+            break
 
 
 def main():
@@ -62,8 +69,9 @@ def main():
     # Read the docs and examples for the argparse module about how to do this.
 
     # Parsing command line arguments is a must-have skill.
-    # This is input data validation.  If something is wrong (or missing) with any
-    # required args, the general rule is to print a usage message and exit(1).
+    # This is input data validation.  If something is wrong (or missing)
+    # with any required args, the general rule is to print a usage message
+    # and exit(1).
 
     if not args:
         parser.print_usage()
@@ -78,10 +86,11 @@ def main():
                 os.makedirs(args.todir)
                 copy_to(get_special_paths(args.dir), args.todir)
         except shutil.Error:
-            print('Oops! {} was already created with the same files'.format(args.todir))
+            print('Oops! {} was already created with the same files'
+                  .format(args.todir))
             sys.exit(1)
     elif args.tozip:
-        pass
+        zip_to(get_special_paths(args.dir), args.tozip)
     else:
         for files in get_special_paths(args.dir):
             print(files)
