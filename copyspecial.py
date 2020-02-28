@@ -37,6 +37,13 @@ def copy_to(paths, dirname):
         shutil.copy(files, dirname)
 
 
+def zip_to(paths, zippath):
+    """Create a zipfile containing the files"""
+    cmd = subprocess.run(['zip', '-j', zippath, paths])
+    print("Command I'm going to do:")
+    print(cmd.args[0] + " " + cmd.args[1] + " " + zippath + " " + paths')
+
+
 def main():
     # This snippet will help you get started with the argparse module.
     parser = argparse.ArgumentParser(
@@ -71,7 +78,7 @@ def main():
                 os.makedirs(args.todir)
                 copy_to(get_special_paths(args.dir), args.todir)
         except shutil.Error:
-            print('Oops! {} was already created'.format(args.todir))
+            print('Oops! {} was already created with the same files'.format(args.todir))
             sys.exit(1)
     else:
         for files in get_special_paths(args.dir):
