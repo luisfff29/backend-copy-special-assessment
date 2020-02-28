@@ -11,34 +11,86 @@
 
 import re
 import os
+import sys
 import shutil
 import subprocess
 import argparse
 
 # This is to help coaches and graders identify student assignments
-__author__ = "???"
+__author__ = "luisfff29 with help from Piero"
 
 
-# +++your code here+++
 # Write functions and modify main() to call them
+def get_special_paths(dirname):
+    """Fin all special files and list them"""
+    paths = []
+    for p, d, f in os.walk(dirname):
+        for files in f:
+            if "/." not in p and re.findall(r'\w*__\w+__\w*.\w*', files):
+                paths.append(os.path.join(p, files))
+    return paths
+
+
+def copy_to(paths, dir_name):
+    """Copy all special files into the given directory"""
+    for files in paths:
+        shutil.copy(files, dir_name)
+
+
+def zip_to(paths, zippath):
+    """Create a zipfile containing the files"""
+    print("Command I'm going to do:")
+    cmd = ['zip', '-j', zippath]
+    cmd.extend(paths)
+    print(" ".join(cmd))
+    try:
+        subprocess.check_output(cmd)
+    except subprocess.CalledProcessError as e:
+        print(e.output.decode('utf8'))
+
 
 def main():
     # This snippet will help you get started with the argparse module.
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Take a directory as an argument")
     parser.add_argument('--todir', help='dest dir for special files')
     parser.add_argument('--tozip', help='dest zipfile for special files')
+    parser.add_argument('dir', help='dir path')
     # TODO need an argument to pick up 'from_dir'
     args = parser.parse_args()
+
+    if args.dir == ".":
+        args.dir = os.getcwd()
 
     # TODO you must write your own code to get the cmdline args.
     # Read the docs and examples for the argparse module about how to do this.
 
     # Parsing command line arguments is a must-have skill.
-    # This is input data validation.  If something is wrong (or missing) with any
-    # required args, the general rule is to print a usage message and exit(1).
+    # This is input data validation.  If something is wrong (or missing)
+    # with any required args, the general rule is to print a usage message
+    # and exit(1).
 
-    # +++your code here+++
+    if not args:
+        parser.print_usage()
+        sys.exit(1)
     # Call your functions
+
+    if args.todir:
+        try:
+            if os.path.exists(args.todir):
+                copy_to(get_special_paths(args.dir), args.todir)
+            else:
+                os.makedirs(args.todir)
+                copy_to(get_special_paths(args.dir), args.todir)
+        except shutil.Error:
+            print('Oops! {} was already created with the same files'
+                  .format(args.todir))
+            sys.exit(1)
+    elif args.tozip:
+        zip_to(get_special_paths(args.dir), args.tozip)
+    else:
+        for files in get_special_paths(args.dir):
+            print(files)
 
 
 if __name__ == "__main__":
