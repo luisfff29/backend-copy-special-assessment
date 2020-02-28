@@ -60,7 +60,6 @@ def main():
     parser.add_argument('dir', help='dir path')
     # TODO need an argument to pick up 'from_dir'
     args = parser.parse_args()
-    print(args)
 
     if args.dir == ".":
         args.dir = os.getcwd()
