@@ -41,7 +41,7 @@ def zip_to(paths, zippath):
     """Create a zipfile containing the files"""
     cmd = subprocess.run(['zip', '-j', zippath, paths])
     print("Command I'm going to do:")
-    print(cmd.args[0] + " " + cmd.args[1] + " " + zippath + " " + paths')
+    print(cmd.args[0] + " " + cmd.args[1] + " " + zippath + " " + paths)
 
 
 def main():
@@ -70,7 +70,7 @@ def main():
         sys.exit(1)
     # Call your functions
 
-    if args.dir:
+    if args.todir:
         try:
             if os.path.exists(args.todir):
                 copy_to(get_special_paths(args.dir), args.todir)
@@ -80,6 +80,8 @@ def main():
         except shutil.Error:
             print('Oops! {} was already created with the same files'.format(args.todir))
             sys.exit(1)
+    elif args.tozip:
+        pass
     else:
         for files in get_special_paths(args.dir):
             print(files)
