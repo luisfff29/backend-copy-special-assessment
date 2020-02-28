@@ -17,7 +17,7 @@ import subprocess
 import argparse
 
 # This is to help coaches and graders identify student assignments
-__author__ = "luisfff29"
+__author__ = "luisfff29 with help from Piero"
 
 
 # Write functions and modify main() to call them
@@ -40,15 +40,13 @@ def copy_to(paths, dir_name):
 def zip_to(paths, zippath):
     """Create a zipfile containing the files"""
     print("Command I'm going to do:")
-    print("zip -j {} {}".format(zippath, " ".join(paths)))
-    print()
-    if "/" not in zippath:
-        for p in paths:
-            subprocess.run(['zip', '-j', zippath, p], capture_output=True)
-    else:
-        for p in paths:
-            subprocess.run(['zip', '-j', zippath, p])
-            break
+    cmd = ['zip', '-j', zippath]
+    cmd.extend(paths)
+    print(" ".join(cmd))
+    try:
+        subprocess.check_output(cmd)
+    except subprocess.CalledProcessError as e:
+        print(e.output.decode('utf8'))
 
 
 def main():
